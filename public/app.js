@@ -4,13 +4,13 @@ const debug = false; // Set to true to bypass login for debugging
 
 // Firebase config (use your actual config here)
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAPabG2Z4C9J78zdFRhIAiGBNAAOu68tRc",
+  authDomain: "better-teams-fr.firebaseapp.com",
+  projectId: "better-teams-fr",
+  storageBucket: "better-teams-fr.firebasestorage.app",
+  messagingSenderId: "337730612061",
+  appId: "1:337730612061:web:48f2aca4f601bde9cd96b4",
+  measurementId: "G-W7HDVZ43MF"
 };
 
 firebase.initializeApp(firebaseConfig);
