@@ -1,63 +1,118 @@
-// Replace with your Firebase config ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+// app.js
+
+const debug = true; // Set to true to bypass login for debugging
+
+// Firebase config (use your actual config here)
 const firebaseConfig = {
-  apiKey: "AIzaSyAPabG2Z4C9J78zdFRhIAiGBNAAOu68tRc",
-  authDomain: "better-teams-fr.firebaseapp.com",
-  projectId: "better-teams-fr",
-  storageBucket: "better-teams-fr.firebasestorage.app",
-  messagingSenderId: "337730612061",
-  appId: "1:337730612061:web:48f2aca4f601bde9cd96b4",
-  measurementId: "G-W7HDVZ43MF"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
 };
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database();
 
-const loginBtn = document.getElementById("loginBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-const chatEl = document.getElementById("chat");
-const loginEl = document.getElementById("login");
-const userNameEl = document.getElementById("userName");
+const loginBtn = document.getElementById('loginBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+const userNameSpan = document.getElementById('userName');
+const chatDiv = document.getElementById('chat');
+const loginDiv = document.getElementById('login');
+const messageInput = document.getElementById('messageInput');
+const messagesDiv = document.getElementById('messages');
 
-loginBtn.onclick = () => {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider);
-};
+// === DEBUG MODE OVERRIDE ===
+if (debug) {
+  loginDiv.style.display = 'none';
+  chatDiv.style.display = 'flex';
+  userNameSpan.textContent = 'DebugUser';
 
-logoutBtn.onclick = () => {
-  auth.signOut();
-};
-
-auth.onAuthStateChanged((user) => {
-  if (user) {
-    loginEl.style.display = "none";
-    chatEl.style.display = "block";
-    userNameEl.textContent = user.displayName;
-  } else {
-    loginEl.style.display = "block";
-    chatEl.style.display = "none";
-  }
-});
-
-function sendMessage() {
-  const msgInput = document.getElementById("messageInput");
-  const text = msgInput.value;
-  const user = auth.currentUser;
-
-  if (text.trim() === "" || !user) return;
-
-  db.ref("messages").push({
-    name: user.displayName,
-    text,
-    timestamp: Date.now()
-  });
-
-  msgInput.value = "";
+  // Fake listener so UI looks live
+  messagesDiv.innerHTML = `
+    <div class="message">
+      <div class="message-avatar">D</div>
+      <div class="message-content">
+        <div class="message-header">
+          <div class="message-author">DebugUser</div>
+          <div class="message-time">now</div>
+        </div>
+        <div class="message-text">This is a debug message preview.</div>
+      </div>
+    </div>`;
 }
 
-db.ref("messages").on("child_added", (snapshot) => {
-  const msg = snapshot.val();
-  const msgEl = document.createElement("p");
-  msgEl.innerText = `${msg.name}: ${msg.text}`;
-  document.getElementById("messages").appendChild(msgEl);
-});
+// === AUTH MODE ===
+if (!debug) {
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      loginDiv.style.display = 'none';
+      chatDiv.style.display = 'flex';
+      userNameSpan.textContent = user.displayName;
+      loadMessages();
+    } else {
+      loginDiv.style.display = 'block';
+      chatDiv.style.display = 'none';
+    }
+  });
+
+  loginBtn.onclick = () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider);
+  };
+
+  logoutBtn.onclick = () => auth.signOut();
+}
+
+// === Send a message ===
+function sendMessage() {
+  const text = messageInput.value.trim();
+  if (text === '') return;
+
+  const message = {
+    name: debug ? 'DebugUser' : auth.currentUser.displayName,
+    text,
+    timestamp: Date.now()
+  };
+
+  if (!debug) {
+    db.ref('messages').push(message);
+  } else {
+    // Just append it locally
+    messagesDiv.innerHTML += `
+      <div class="message">
+        <div class="message-avatar">D</div>
+        <div class="message-content">
+          <div class="message-header">
+            <div class="message-author">DebugUser</div>
+            <div class="message-time">now</div>
+          </div>
+          <div class="message-text">${text}</div>
+        </div>
+      </div>`;
+  }
+
+  messageInput.value = '';
+}
+
+// === Load messages from DB ===
+function loadMessages() {
+  db.ref('messages').limitToLast(50).on('child_added', snapshot => {
+    const msg = snapshot.val();
+    const msgElement = document.createElement('div');
+    msgElement.className = 'message';
+    msgElement.innerHTML = `
+      <div class="message-avatar">${msg.name[0]}</div>
+      <div class="message-content">
+        <div class="message-header">
+          <div class="message-author">${msg.name}</div>
+          <div class="message-time">${new Date(msg.timestamp).toLocaleTimeString()}</div>
+        </div>
+        <div class="message-text">${msg.text}</div>
+      </div>`;
+    messagesDiv.appendChild(msgElement);
+  });
+}
