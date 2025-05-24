@@ -40,6 +40,9 @@ if (debug) {
   chatDiv.style.display = 'flex';
   userNameSpan.textContent = 'DebugUser';
   
+  // Set debug avatar
+  updateUserAvatar(null, 'DebugUser');
+  
   // Still load messages in debug mode
   loadMessages();
 }
@@ -50,7 +53,11 @@ if (!debug) {
     if (user) {
       loginDiv.style.display = 'none';
       chatDiv.style.display = 'flex';
+      
+      // Update user info in sidebar
       userNameSpan.textContent = user.displayName;
+      updateUserAvatar(user.photoURL, user.displayName);
+      
       loadMessages();
     } else {
       loginDiv.style.display = 'block';
@@ -73,30 +80,57 @@ function sendMessage() {
   const text = messageInput.value.trim();
   if (text === '') return;
 
+  // Clear input immediately for better UX
+  messageInput.value = '';
+  messageInput.style.height = 'auto';
+
+  const currentUser = debug ? null : auth.currentUser;
   const message = {
-    name: debug ? 'DebugUser' : (auth.currentUser ? auth.currentUser.displayName : 'Anonymous'),
+    name: debug ? 'DebugUser' : (currentUser ? currentUser.displayName : 'Anonymous'),
     text,
-    timestamp: Date.now()
+    timestamp: Date.now(),
+    photoURL: debug ? null : (currentUser ? currentUser.photoURL : null)
   };
 
   console.log('Sending message:', message); // Debug log
 
   if (!debug && auth.currentUser) {
+    // Only add to Firebase - the listener will handle displaying it
     db.ref('messages').push(message)
       .then(() => {
         console.log('Message sent successfully');
-        messageInput.value = '';
       })
       .catch(error => {
         console.error('Error sending message:', error);
+        // If error, restore the message in input
+        messageInput.value = text;
       });
   } else if (debug) {
-    // In debug mode, simulate adding to database
+    // In debug mode, manually add since there's no Firebase listener
     clearWelcomeMessage();
     const msgElement = createMessageElement(message);
     messagesDiv.appendChild(msgElement);
-    messageInput.value = '';
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+}
+
+// === Update user avatar in sidebar ===
+function updateUserAvatar(photoURL, displayName) {
+  const userAvatarSidebar = document.getElementById('userAvatarSidebar');
+  
+  if (photoURL) {
+    // If user has a profile picture, use it
+    userAvatarSidebar.innerHTML = `
+      <img src="${photoURL}" alt="${displayName}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
+      <div class="status-indicator online"></div>
+    `;
+  } else {
+    // Fallback to initials
+    const initials = displayName ? displayName.split(' ').map(n => n[0]).join('').toUpperCase() : 'U';
+    userAvatarSidebar.innerHTML = `
+      <span style="font-size: 12px; font-weight: 600;">${initials}</span>
+      <div class="status-indicator online"></div>
+    `;
   }
 }
 
@@ -104,8 +138,18 @@ function sendMessage() {
 function createMessageElement(msg) {
   const msgElement = document.createElement('div');
   msgElement.className = 'message';
+  
+  // Determine avatar content
+  let avatarContent = '';
+  if (msg.photoURL) {
+    avatarContent = `<img src="${msg.photoURL}" alt="${msg.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">`;
+  } else {
+    const initial = msg.name ? msg.name[0].toUpperCase() : 'A';
+    avatarContent = initial;
+  }
+  
   msgElement.innerHTML = `
-    <div class="message-avatar">${msg.name ? msg.name[0].toUpperCase() : 'A'}</div>
+    <div class="message-avatar">${avatarContent}</div>
     <div class="message-content">
       <div class="message-header">
         <div class="message-author">${msg.name || 'Anonymous'}</div>
