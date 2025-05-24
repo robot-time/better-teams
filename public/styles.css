@@ -463,13 +463,15 @@ body {
   padding: 20px;
   border-top: 1px solid #e1e5e9;
   background: white;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
 .input-wrapper {
   border: 1px solid #e1e5e9;
-  border-radius: 8px;
+  border-radius: 15px;
   background: white;
   transition: border-color 0.15s ease;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
 .input-wrapper:focus-within {
@@ -515,6 +517,7 @@ body {
   align-items: flex-end;
   padding: 8px 12px;
   gap: 8px;
+  border-radius: 10px;
 }
 
 #messageInput {
@@ -527,8 +530,9 @@ body {
   line-height: 1.46;
   color: #1d1c1d;
   background: transparent;
-  min-height: 20px;
+  min-height: 50px;
   max-height: 200px;
+  border-radius: 10px;
 }
 
 #messageInput::placeholder {
@@ -541,7 +545,7 @@ body {
   border: none;
   background: #007a5a;
   color: white;
-  border-radius: 6px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -611,7 +615,7 @@ body {
   display: flex;
   align-items: center;
   border: none;
-  border-radius: 8px;
+  border-radius: 20px;
   overflow: hidden;
   transition: all 0.2s;
   cursor: pointer;
