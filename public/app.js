@@ -1,6 +1,6 @@
 // app.js
 
-const debug = true; // Set to true to bypass login for debugging
+const debug = false; // Set to true to bypass login for debugging
 
 // Firebase config (use your actual config here)
 const firebaseConfig = {
