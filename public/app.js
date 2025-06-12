@@ -69,9 +69,13 @@ function loadMessages() {
 
 // If user already saved a name, skip prompt
 window.onload = () => {
-  if (getUsername()) {
+  const username = getUsername();
+  if (username && username !== 'Anonymous') {
     document.getElementById('usernameModal').style.display = 'none';
     chatDiv.style.display = 'block';
     loadMessages();
+  } else {
+    document.getElementById('usernameModal').style.display = 'flex';
+    chatDiv.style.display = 'none';
   }
 };
