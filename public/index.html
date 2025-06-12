@@ -1,181 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Better Teams</title>
-  <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
 <body>
-  <!-- Login Screen -->
-  <div id="login" class="login-container">
-    <div class="login-card">
-      <div class="login-header">
-        <div class="logo">
-          <i class="fas fa-comments"></i>
-          <span>Better Teams</span>
-        </div>
-        <h1>Welcome back</h1>
-        <p>Sign in to continue to your workspace</p>
-      </div>
-      
-      <div class="login-form">
-        <button id="loginBtn" class="google-signin-btn">
-          <svg width="18" height="18" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-          </svg>
-          Sign in with Google
-        </button>
-      </div>
+  <!-- Username Modal -->
+  <div id="usernameModal" class="modal">
+    <div class="modal-content">
+      <h2>Enter Your Name</h2>
+      <input type="text" id="usernameInput" placeholder="e.g. Miles">
+      <button onclick="saveUsername()">Start Faxing</button>
     </div>
   </div>
 
-  <!-- Main Chat Interface -->
-  <div id="chat" class="chat-interface">
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <div class="sidebar-header">
-        <div class="workspace-info">
-          <div class="workspace-icon">
-            <i class="fas fa-comments"></i>
-          </div>
-          <div class="workspace-details">
-            <h3>Better Teams</h3>
-            <span class="workspace-status">
-              <i class="fas fa-circle online"></i>
-              Online
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div class="sidebar-content">
-        <div class="section">
-          <div class="section-header">
-            <i class="fas fa-chevron-down"></i>
-            <span>Channels</span>
-          </div>
-          <div class="channel-list">
-            <div class="channel-item active">
-              <i class="fas fa-hashtag"></i>
-              <span>general</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="section">
-          <div class="section-header">
-            <i class="fas fa-chevron-down"></i>
-            <span>Direct Messages</span>
-          </div>
-          <div class="dm-list">
-            <div class="dm-item">
-              <div class="user-avatar-small">
-                <img src="https://via.placeholder.com/32" alt="User">
-                <div class="status-indicator online"></div>
-              </div>
-              <span>Coming Soon!</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="sidebar-footer">
-        <div class="user-profile">
-          <div class="user-avatar-small" id="userAvatarSidebar">
-            <div class="status-indicator online"></div>
-          </div>
-          <div class="user-info">
-            <span id="userNameSidebar"></span>
-            <div class="user-status">Available</div>
-          </div>
-          <button id="logoutBtn" class="logout-btn">
-            <i class="fas fa-sign-out-alt"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Main Content -->
+  <!-- Fax Interface -->
+  <div id="chat" class="chat-interface" style="display: none;">
     <div class="main-content">
-      <!-- Header -->
-      <div class="chat-header">
-        <div class="channel-info">
-          <h2>
-            <i class="fas fa-hashtag"></i>
-            general
-          </h2>
-          <div class="channel-meta">
-            <span class="member-count">
-              <i class="fas fa-users"></i>
-              1 member
-            </span>
-            <span class="channel-description">Team general discussion</span>
-          </div>
-        </div>
-        
+      <div class="fax-header">
+        <h1>📠 FAX TERMINAL</h1>
       </div>
 
-      <!-- Messages Container -->
       <div class="messages-container">
-        <div id="messages" class="messages">
-          <div class="welcome-message">
-            <div class="welcome-icon">
-              <i class="fas fa-hashtag"></i>
-            </div>
-            <h3>Welcome to #general</h3>
-            <p>This is the start of your conversation in #general. Send a message to get started!</p>
-          </div>
-        </div>
+        <div id="messages" class="messages"></div>
       </div>
 
-      <!-- Message Input -->
       <div class="message-input-container">
-        <div class="input-wrapper">
-          
-          <div class="input-area">
-            <textarea 
-              id="messageInput" 
-              placeholder="Message #general"
-              rows="1"
-            ></textarea>
-            <button class="send-btn-animated" onclick="sendMessage()">
-              <div class="svg-wrapper-1">
-                <div class="svg-wrapper">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    width="16"
-                    height="16"
-                  >
-                    <path fill="none" d="M0 0h24v24H0z"></path>
-                    <path
-                      fill="currentColor"
-                      d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
-                    ></path>
-                  </svg>
-                </div>
-              </div>
-              <span>Send</span>
-            </button>
-          </div>
-        
-            
-          </div>
-        </div>
+        <textarea id="messageInput" placeholder="Type your fax..."></textarea>
+        <button onclick="sendMessage()">Send Fax</button>
       </div>
     </div>
   </div>
 
-  <!-- Firebase SDKs -->
+  <link rel="stylesheet" href="styles.css" />
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
   <script src="app.js"></script>
 </body>
-</html>
